@@ -227,6 +227,13 @@ export class DiagramPanelController extends React.Component<DiagramPanelControll
                   placement={this.props.options.legend.placement}
                   sortBy={this.props.options.legend.sortBy}
                   sortDesc={this.props.options.legend.sortDesc}
+                  // Newer Grafana (verified 13.1.0) renders the table-legend header row
+                  // `sr-only` (visually hidden) unless the legend is marked sortable; it
+                  // showed unconditionally on 12.3.1. `isSortable` postdates the pinned
+                  // @grafana/ui@9 types but is honored by the host Grafana's VizLegend at
+                  // runtime (sorting is already wired up via onToggleSort below).
+                  // @ts-expect-error isSortable is provided by the runtime @grafana/ui
+                  isSortable
                   onLabelClick={(item, event) => {}}
                   onToggleSort={this.onToggleSort}
                 />

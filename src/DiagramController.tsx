@@ -9,8 +9,6 @@ import React from 'react';
 import { updateDiagramStyle } from 'visualizers/updateDiagramStyle';
 import { DiagramOptions, DiagramSeriesModel, DiagramSeriesValue } from './config/types';
 
-const mermaidAPI = mermaid.mermaidAPI;
-
 export interface DiagramPanelControllerProps {
   theme: GrafanaTheme2;
   id: number;
@@ -140,9 +138,9 @@ export class DiagramPanelController extends React.Component<DiagramPanelControll
         const diagramId = `diagram-${this.props.id}-${token}`;
         const interpolated = this.props.replaceVariables(this.contentProcessor(diagramDefinition));
   
-        const rendered = await mermaidAPI
+        const rendered = await mermaid
           .render(diagramId, interpolated)
-          .catch(() => mermaidAPI.render(diagramId, diagramDefinition));
+          .catch(() => mermaid.render(diagramId, diagramDefinition));
         if (token !== this.renderToken) {
           return;
         }

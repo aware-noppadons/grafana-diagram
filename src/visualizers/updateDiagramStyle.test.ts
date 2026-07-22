@@ -32,10 +32,37 @@ const container = (svgInner: string): HTMLElement => {
 describe('updateDiagramStyle', () => {
   describe('flowchart binding (regression guard)', () => {
     it('injects a .diagram-value onto a node matched by data-id', () => {
-      const el = container('<g data-id="Orders"><foreignObject><div>Orders</div></foreignObject></g>');
+      const el = container('<g class="node" data-id="Orders"><foreignObject><div>Orders</div></foreignObject></g>');
       updateDiagramStyle(el, [makeModel('Orders', 120)], baseOptions(), 'd1');
       expect(el.querySelector('.diagram-value')).not.toBeNull();
       expect(el.innerHTML).toContain('120');
+    });
+
+    // mermaid 11 dropped node `data-id` and renders node labels as `<span class="nodeLabel">`.
+    it('binds a mermaid 11 node (no data-id, span.nodeLabel) via the node path', () => {
+      const el = container(
+        '<g class="nodes"><g class="node default"><g class="label"><foreignObject><div><span class="nodeLabel"><p>Orders</p></span></div></foreignObject></g></g></g>'
+      );
+      updateDiagramStyle(el, [makeModel('Orders', 120)], baseOptions(), 'd7');
+      expect(el.querySelector('g.node .diagram-value')).not.toBeNull();
+      expect(el.innerHTML).toContain('120');
+    });
+
+    it('does NOT style a mermaid 11 node label (span.nodeLabel) as an edge', () => {
+      // regression guard: the edge matcher must match only .edgeLabel, never node labels.
+      // HTML-namespaced (inside foreignObject) so only the class differs from an edge label.
+      const el = container('<foreignObject><div><span class="nodeLabel">Orders</span></div></foreignObject>');
+      updateDiagramStyle(el, [makeModel('Orders', 120)], baseOptions(), 'd8');
+      expect(el.querySelector('.diagram-value')).toBeNull();
+    });
+
+    it('binds a flowchart edge label (span.edgeLabel)', () => {
+      const el = container(
+        '<g class="edgeLabels"><g class="edgeLabel"><foreignObject><div class="labelBkg"><span class="edgeLabel">charge</span></div></foreignObject></g></g>'
+      );
+      updateDiagramStyle(el, [makeModel('charge', 42)], baseOptions(), 'd9');
+      expect(el.querySelector('.diagram-value')).not.toBeNull();
+      expect(el.innerHTML).toContain('42');
     });
   });
 

@@ -12,12 +12,18 @@ type MetricIndicator = DisplayValue & {
 };
 
 const selectElementById = (container: HTMLElement, id: string): Selection<any, any, any, any> => {
-  return select(container.querySelector(`[data-id="${id}"]`));
+  const el = container.querySelector(`[data-id="${id}"]`);
+  return select(el ? el.closest('.node') : null);
 };
 
 const selectElementByEdgeLabel = (container: HTMLElement, id: string): Selection<any, any, any, any> => {
+  // Match edge-label spans only. Node labels are <span> too — mermaid 11 renders them
+  // as `<span class="nodeLabel">` and dropped node `data-id`, so a bare `span` selector
+  // grabbed nodes here and styled them like edges. Restricting to `.edgeLabel` lets a
+  // node fall through to selectDivElementByAlias -> styleD3Shapes (correct node styling).
+  // Edge labels are `.edgeLabel` on both mermaid 10 and 11, so edges still match.
   return select(container)
-    .selectAll('span')
+    .selectAll('span.edgeLabel')
     .filter(function () {
       return select(this).text() === id;
     });

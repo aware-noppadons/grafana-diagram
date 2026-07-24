@@ -64,6 +64,28 @@ describe('updateDiagramStyle', () => {
       expect(el.querySelector('.diagram-value')).not.toBeNull();
       expect(el.innerHTML).toContain('42');
     });
+
+    it('colors the whole flowchart edge label (label + value), not just the value', () => {
+      const el = container(
+        '<g class="edgeLabels"><g class="edgeLabel"><foreignObject><div class="labelBkg"><span class="edgeLabel">charge</span></div></foreignObject></g></g>'
+      );
+      updateDiagramStyle(el, [makeModel('charge', 42, 'rgb(1, 2, 3)')], baseOptions(), 'dA');
+      const label = el.querySelector('span.edgeLabel');
+      const value = el.querySelector('.diagram-value');
+      expect(value?.getAttribute('style') || '').toContain('color: rgb(1, 2, 3)');
+      expect(label?.getAttribute('style') || '').toContain('color: rgb(1, 2, 3)');
+    });
+
+    it('colors the edge label background too in background mode', () => {
+      const el = container(
+        '<g class="edgeLabels"><g class="edgeLabel"><foreignObject><div class="labelBkg"><span class="edgeLabel">charge</span></div></foreignObject></g></g>'
+      );
+      updateDiagramStyle(el, [makeModel('charge', 42, 'rgb(9, 8, 7)')], baseOptions({ useBackground: true }), 'dB');
+      const label = el.querySelector('span.edgeLabel');
+      const value = el.querySelector('.diagram-value');
+      expect(value?.getAttribute('style') || '').toContain('background-color: rgb(9, 8, 7)');
+      expect(label?.getAttribute('style') || '').toContain('background-color: rgb(9, 8, 7)');
+    });
   });
 
   describe('sequence binding (exact match)', () => {
@@ -81,13 +103,13 @@ describe('updateDiagramStyle', () => {
       expect(el.querySelector('text.actor')?.getAttribute('style')).toContain('rgb(255, 0, 0)');
     });
 
-    it('binds onto a message (connection) label, coloring only the value', () => {
+    it('colors the whole message label (name + value) like a graph node', () => {
       const el = container('<text class="messageText">charge</text>');
       updateDiagramStyle(el, [makeModel('charge', 42, 'rgb(0, 0, 255)')], baseOptions(), 'd4');
       const value = el.querySelector('tspan.diagram-value');
       expect(value?.textContent).toBe('42');
       expect(value?.getAttribute('style')).toContain('rgb(0, 0, 255)');
-      expect(el.querySelector('text.messageText')?.getAttribute('style') || '').not.toContain('rgb(0, 0, 255)');
+      expect(el.querySelector('text.messageText')?.getAttribute('style') || '').toContain('rgb(0, 0, 255)');
     });
 
     it('does not bind when the name matches no element', () => {

@@ -131,10 +131,14 @@ const styleFlowChartEdgeLabel = (
   if (indicator.color) {
     if (useBackground) {
       v.style('background-color', indicator.color);
+      // Color the edge label too, so the whole connection matches (nodes color name+value together).
+      targetElement.style('background-color', indicator.color);
       const parentShapeElement = fetchParentsUntilShapeElementFound(targetElement.node(), '.node.flowchart-label');
       parentShapeElement?.firstElementChild?.setAttribute('style', `fill: ${indicator.color}`);
     } else {
       v.style('color', indicator.color);
+      // Color the edge label too, not just the appended value.
+      targetElement.style('color', indicator.color);
     }
   }
 };
@@ -148,18 +152,16 @@ const styleSequenceText = (targetElement: Selection<any, any, any, any>, indicat
     if (!Number.isNaN(y)) {
       textNode.setAttribute('y', String(y + (isActor ? -9 : 8)));
     }
-    const value = select(textNode)
+    select(textNode)
       .append('tspan')
       .classed('diagram-value', true)
       .attr('x', anchorX)
       .attr('dy', isActor ? '1.2em' : '1.5em')
       .text(formattedValueToString(indicator));
     if (indicator.color) {
-      if (isActor) {
-        select(textNode).style('fill', indicator.color).selectAll('tspan').style('fill', indicator.color);
-      } else {
-        value.style('fill', indicator.color);
-      }
+      // Color the whole text (message/actor label) and its value tspan, so a connection
+      // (message) matches how an actor/node colors its name+value together.
+      select(textNode).style('fill', indicator.color).selectAll('tspan').style('fill', indicator.color);
     }
   });
 };

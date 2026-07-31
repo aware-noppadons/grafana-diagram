@@ -1,0 +1,13 @@
+{
+  "name": "grafana-diagram-sequence-repro",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Reproduction harness: jdbranham-diagram-panel binds data to flowchart but not sequence diagrams",
+  "scripts": {
+    "screenshot": "node scripts/screenshot.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.61.1"
+  }
+}

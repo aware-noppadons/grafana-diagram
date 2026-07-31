@@ -186,9 +186,9 @@ describe('updateDiagramStyle', () => {
       expect(el.querySelector('.diagram-value')?.textContent).toBe('42');
     });
 
-    it('wraps a mermaid 11 node (matched by label text) in an anchor', () => {
+    it('wraps a node matched by its label text in an anchor', () => {
       const el = container(
-        '<g class="nodes"><g class="node default"><g class="label"><foreignObject><div><span class="nodeLabel"><p>Orders</p></span></div></foreignObject></g></g></g>'
+        '<g class="node"><g class="label"><foreignObject><div>Orders</div></foreignObject></g></g>'
       );
       updateDiagramStyle(el, [makeLinkedModel('Orders', 120, [{ href: '/d/abc' }])], baseOptions(), 'L7');
       const anchor = el.querySelector('a');

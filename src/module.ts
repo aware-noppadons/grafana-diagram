@@ -149,19 +149,23 @@ const addStyleEditors = (builder: PanelOptionsEditorBuilder<DiagramOptions>) => 
   return builder;
 };
 
+// Standard field options this panel does not use. Note what is NOT here: `Links` must stay
+// enabled, otherwise Grafana drops `Overrides -> Data links` from the field config before the
+// panel receives it, and diagram/legend hyperlinks silently stop working.
+export const disabledStandardFieldOptions = [
+  FieldConfigProperty.Min,
+  FieldConfigProperty.Max,
+  FieldConfigProperty.DisplayName,
+  FieldConfigProperty.Color,
+];
+
 const createPanelPlugin = () => {
   const plugin = new PanelPlugin<DiagramOptions>(DiagramPanel)
     .setMigrationHandler(diagramPanelMigrationHandler)
     .setPanelChangeHandler(diagramPanelChangeHandler)
     // Field Configuration Options
     .useFieldConfig({
-      disableStandardOptions: [
-        FieldConfigProperty.Min,
-        FieldConfigProperty.Max,
-        FieldConfigProperty.DisplayName,
-        FieldConfigProperty.Links,
-        FieldConfigProperty.Color,
-      ],
+      disableStandardOptions: disabledStandardFieldOptions,
       useCustomConfig: (builder) => {
         builder.addSelect({
           name: 'Value by',

@@ -18,6 +18,11 @@ All notable changes to this project will be documented in this file.
 ### Added
 - Legend panel options: **Placement** (Bottom/Right), **Mode** (Table/List) and **Values** (which stats to show as columns). Placement now updates live without a panel reload.
 - First unit tests for the data-binding/styling logic (`updateDiagramStyle`).
+- **Hyperlinks from Data links.** A series' Grafana data link (`Field` tab or a by-name `Override`) now makes every diagram element bound to that series clickable — flowchart nodes and edge labels, sequence actors and message labels — and follows the same link from the series' legend row. Url interpolation (variables, `${__value.numeric}`) and *Open in new tab* are honored; `target=_blank` links get `rel="noopener noreferrer"`. Only `http(s)`/`mailto`/relative urls are linkified.
+  - The standard **Data links** field option was previously disabled by the panel, so Grafana stripped data links from the field config before the panel received them and `Overrides -> Data links` silently did nothing. It is enabled again.
+
+### Security
+- Node labels are no longer rebuilt through `innerHTML`. The label text (which can come from a remote diagram definition or a dashboard variable) and the formatted value (which comes from the datasource) were re-parsed as markup, so e.g. a value of `<img src=x onerror=...>` executed. Both are now written as text nodes.
 
 ## v1.0.0
 

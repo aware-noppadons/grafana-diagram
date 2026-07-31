@@ -132,12 +132,43 @@ diagram element bound to that series becomes a hyperlink, as does its legend row
 * sequence **actors** and **message labels**
 * the **legend** label for that series
 
-The link's url supports the usual interpolations (dashboard variables, `${__value.numeric}`,
-`${__field.name}`), and *Open in new tab* is respected. If a series has more than one data link,
-the first one is used.
+*Open in new tab* is respected on every one of those surfaces. **If a series has more than one
+data link, the first one is used** — with both a `Field` default link and an `Override` link on the
+same series, the override comes first, so options set on the other link (including *Open in new
+tab*) are not what you get.
 
 Only `http`/`https`/`mailto` and Grafana-relative urls become links; anything script-bearing
 (e.g. `javascript:`) is ignored, since a link url can be built from dashboard variables.
+
+#### Variables available in the link url
+
+One link on the `Field` tab is usually all you need: interpolate the series name and it resolves
+per element, so each node/actor/label links somewhere different.
+
+| Variable | Resolves to | Example |
+| --- | --- | --- |
+| `${__field.name}` | the series/metric name — the same name that matched the diagram element | `Orders` |
+| `${__series.name}` | same value as `${__field.name}` | `Orders` |
+| `${__value.numeric}` | the displayed value, unformatted | `120` |
+| `${__value.text}` | the displayed value, formatted (unit/decimals applied) | `120` |
+| `${__value.raw}` | the displayed value, raw | `120` |
+| `$myvar` / `${myvar}` | any dashboard/template variable | `prod` |
+| `${__from}` / `${__to}` | dashboard time range, epoch ms | `1785444418926` |
+| `${__url_time_range}` | time range as url params (put it last in the query string) | `from=now-6h&to=now&timezone=browser` |
+| `${__dashboard.uid}` | uid of the current dashboard | `my-dash` |
+| `${__org.name}` | current organisation | `Main Org.` |
+| `${__user.login}` | logged-in user (empty for anonymous access) | `admin` |
+
+Not available: `${__value.time}` is empty. The value bound to a diagram element is a reduction over
+the whole time range (the *Value by* option: last/mean/min/max/sum), so there is no single
+timestamp behind it. Use `${__to}` if you need a time.
+
+Example — one link that opens a per-service dashboard, filtered to the clicked series and the
+dashboard's current time range:
+
+```
+/d/service-detail/service?var-service=${__field.name}&${__url_time_range}
+```
 
 ### Link Metrics
 Mermaid Notation is the same, but now supports supplying a metric name in the "text".

@@ -196,6 +196,21 @@ describe('updateDiagramStyle', () => {
       expect(anchor?.querySelector('g.node')).not.toBeNull();
     });
 
+    it('links a composite node to the link of the member that won', () => {
+      const el = container('<g class="node" data-id="Cluster"><foreignObject><div>Cluster</div></foreignObject></g>');
+      const models = [
+        makeLinkedModel('Orders', 120, [{ href: 'https://example.com/orders' }]),
+        makeLinkedModel('Payments', 95, [{ href: 'https://example.com/payments' }]),
+      ];
+      const options = baseOptions({
+        composites: [{ name: 'Cluster', members: ['Orders', 'Payments'], valueName: 'last', showLowestValue: true }],
+      });
+      updateDiagramStyle(el, models, options, 'L8');
+      const anchor = el.querySelector('a');
+      // showLowestValue -> Payments (95) wins, so the composite carries its link
+      expect(anchor?.getAttribute('href')).toBe('https://example.com/payments');
+    });
+
     it('leaves the diagram untouched when the series has no data links', () => {
       const el = container('<text class="actor"><tspan x="10">Orders</tspan></text>');
       updateDiagramStyle(el, [makeLinkedModel('Orders', 120, [])], baseOptions(), 'L5');

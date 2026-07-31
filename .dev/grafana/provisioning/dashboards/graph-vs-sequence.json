@@ -1,0 +1,168 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "type": "jdbranham-diagram-panel",
+      "title": "Flowchart - nodes AND edges bind data",
+      "gridPos": { "h": 20, "w": 12, "x": 0, "y": 0 },
+      "id": 1,
+      "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "120",
+          "alias": "Orders",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "95",
+          "alias": "Payments",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "78",
+          "alias": "Shipping",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "42",
+          "alias": "charge",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "E",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "17",
+          "alias": "fulfil",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "valueName": "last" } },
+        "overrides": []
+      },
+      "options": {
+        "pluginVersion": "1.10.4",
+        "nodeSize": { "minWidth": 30, "minHeight": 30 },
+        "composites": [],
+        "metricCharacterReplacements": [],
+        "style": "",
+        "legend": {
+          "show": true,
+          "stats": ["mean", "last", "min", "max", "sum"],
+          "asTable": true,
+          "hideEmpty": false,
+          "hideZero": false,
+          "placement": "bottom",
+          "displayMode": "table",
+          "sortBy": "last",
+          "sortDesc": true,
+          "gradient": { "enabled": true, "show": true }
+        },
+        "maxWidth": true,
+        "moddedSeriesVal": 0,
+        "valueName": "last",
+        "content": "graph LR\n  Orders -->|charge| Payments\n  Payments -->|fulfil| Shipping\n",
+        "mode": "content",
+        "useBackground": false
+      }
+    },
+    {
+      "type": "jdbranham-diagram-panel",
+      "title": "Sequence - actors AND messages bind data (fixed)",
+      "gridPos": { "h": 20, "w": 12, "x": 12, "y": 0 },
+      "id": 2,
+      "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "120",
+          "alias": "Orders",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "95",
+          "alias": "Payments",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "78",
+          "alias": "Shipping",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "42",
+          "alias": "charge",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        },
+        {
+          "refId": "E",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "17",
+          "alias": "fulfil",
+          "datasource": { "type": "grafana-testdata-datasource", "uid": "testdata" }
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "valueName": "last" } },
+        "overrides": []
+      },
+      "options": {
+        "pluginVersion": "1.10.4",
+        "nodeSize": { "minWidth": 30, "minHeight": 30 },
+        "composites": [],
+        "metricCharacterReplacements": [],
+        "style": "",
+        "legend": {
+          "show": true,
+          "stats": ["mean", "last", "min", "max", "sum"],
+          "asTable": true,
+          "hideEmpty": false,
+          "hideZero": false,
+          "placement": "bottom",
+          "displayMode": "table",
+          "sortBy": "last",
+          "sortDesc": true,
+          "gradient": { "enabled": true, "show": true }
+        },
+        "maxWidth": true,
+        "moddedSeriesVal": 0,
+        "valueName": "last",
+        "content": "sequenceDiagram\n  participant Orders\n  participant Payments\n  participant Shipping\n  Orders->>Payments: charge\n  Payments->>Shipping: fulfil\n",
+        "mode": "content",
+        "useBackground": false
+      }
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 39,
+  "tags": ["repro", "diagram-panel"],
+  "templating": { "list": [] },
+  "time": { "from": "now-6h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Diagram Panel - Graph vs Sequence",
+  "uid": "diagram-repro",
+  "version": 1,
+  "weekStart": ""
+}

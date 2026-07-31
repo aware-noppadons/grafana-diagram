@@ -33,3 +33,6 @@ e2e-results/
 .idea
 
 .DS_Store
+
+# harness node_modules (the live copies run from the parent workspace dir)
+.dev/node_modules/

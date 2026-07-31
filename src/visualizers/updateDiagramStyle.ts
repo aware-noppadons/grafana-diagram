@@ -1,6 +1,7 @@
 import { DisplayValue, formattedValueToString, LinkModel } from '@grafana/data';
 import { select, Selection } from 'd3';
 import { diagramStyleFormatter } from 'diagramStyleFormatter';
+import { getSeriesLinks, linkifyElement } from './diagramLinks';
 import { CompositeMetric, DiagramOptions, DiagramSeriesModel, NodeSizeOptions } from '../config/types';
 
 type MetricIndicator = DisplayValue & {
@@ -93,13 +94,25 @@ const styleD3Shapes = (
   if (div.node()) {
     const divElement = div.node() as HTMLElement;
     resizeGrouping(div, nodeSize);
-    let content = divElement.innerText + `<br/> ${formattedValueToString(indicator)}`;
+    // Built as text nodes, never innerHTML: the label text comes from the diagram definition
+    // (which can be fetched from a url or interpolated from a variable) and the value text from
+    // the datasource, so neither may be re-parsed as markup.
+    const label = divElement.innerText;
+    const lines: string[] = [label, ` ${formattedValueToString(indicator)}`];
     if (indicator.isComposite) {
-      content += `<br/>${indicator.originalName}`;
+      lines.push(indicator.originalName ?? '');
       divElement.style.marginTop = `-${nodeSize.minHeight / 4}px`;
     }
-    // TODO: Add Field/Series Links??
-    divElement.innerHTML = `<div style="margin:auto">${content}</div>`;
+    const content = document.createElement('div');
+    content.style.margin = 'auto';
+    lines.forEach((line, index) => {
+      if (index > 0) {
+        content.appendChild(document.createElement('br'));
+      }
+      content.appendChild(document.createTextNode(line));
+    });
+    divElement.textContent = '';
+    divElement.appendChild(content);
   }
   if (indicator.color) {
     if (useBackground) {
@@ -166,6 +179,17 @@ const injectCustomStyle = (container: HTMLElement, diagramStyle: string, diagram
   diagramStyleElement.text(diagramStyleFormatter(diagramStyle, diagramId));
 };
 
+// Make every element matched for this series clickable, using its first data link.
+const linkifyIndicator = (targetElement: Selection<any, any, any, any>, indicator: MetricIndicator) => {
+  const link = indicator.links?.[0];
+  if (!link) {
+    return;
+  }
+  targetElement.each(function (this: Element) {
+    linkifyElement(this, link);
+  });
+};
+
 const processDiagramSeriesModel = (container: HTMLElement, indicator: MetricIndicator, options: DiagramOptions) => {
   const key = indicator.metricName;
 
@@ -173,24 +197,28 @@ const processDiagramSeriesModel = (container: HTMLElement, indicator: MetricIndi
   let targetElement = selectElementById(container, key);
   if (!targetElement.empty()) {
     styleD3Shapes(targetElement, indicator, options.useBackground, options.nodeSize);
+    linkifyIndicator(targetElement, indicator);
     return;
   }
 
   targetElement = selectElementByEdgeLabel(container, key);
   if (!targetElement.empty()) {
     styleFlowChartEdgeLabel(targetElement, indicator, options.useBackground, options.nodeSize);
+    linkifyIndicator(targetElement, indicator);
     return;
   }
 
   targetElement = selectDivElementByAlias(container, key);
   if (!targetElement.empty()) {
     styleD3Shapes(targetElement, indicator, options.useBackground, options.nodeSize);
+    linkifyIndicator(targetElement, indicator);
     return;
   }
 
   targetElement = selectTextElementByAlias(container, key);
   if (!targetElement.empty()) {
     styleSequenceText(targetElement, indicator);
+    linkifyIndicator(targetElement, indicator);
     return;
   }
 
@@ -237,6 +265,7 @@ const reduceModels = (models: DiagramSeriesModel[]): MetricIndicator[] => {
         ...dv,
         metricName: m.label,
         valueName: dv.title,
+        links: getSeriesLinks(m, dv),
       };
     })
     .filter((m) => m != null) as any;

@@ -122,6 +122,23 @@ graph LR
 * Variable replacement in the diagram definition   
 
 
+### Hyperlinks (Data links)
+
+Add a **Data link** to a series (`Field` tab, or an `Override` matched by series name) and every
+diagram element bound to that series becomes a hyperlink, as does its legend row:
+
+* flowchart **nodes** — the whole shape is clickable
+* flowchart **edge labels**
+* sequence **actors** and **message labels**
+* the **legend** label for that series
+
+The link's url supports the usual interpolations (dashboard variables, `${__value.numeric}`,
+`${__field.name}`), and *Open in new tab* is respected. If a series has more than one data link,
+the first one is used.
+
+Only `http`/`https`/`mailto` and Grafana-relative urls become links; anything script-bearing
+(e.g. `javascript:`) is ignored, since a link url can be built from dashboard variables.
+
 ### Link Metrics
 Mermaid Notation is the same, but now supports supplying a metric name in the "text".
 

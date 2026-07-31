@@ -15,6 +15,18 @@ function diagramStyleFormatter(customStyle: string, diagramId: string) {
 		fill: transparent;
 	}
 
+	/* A linked label must be clickable across its whole box, not only where a glyph is
+	   painted: a sequence message's value sits below its label, so the arrow line runs
+	   through the middle of the link and swallowed the click. */
+	#${diagramId} a.diagram-link {
+		pointer-events: bounding-box;
+		cursor: pointer;
+	}
+
+	#${diagramId} .messageLine0, #${diagramId} .messageLine1 {
+		pointer-events: none;
+	}
+
 	${customStyle}
 	`;
 }

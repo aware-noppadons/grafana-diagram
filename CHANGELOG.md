@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 - First unit tests for the data-binding/styling logic (`updateDiagramStyle`).
 - **Hyperlinks from Data links.** A series' Grafana data link (`Field` tab or a by-name `Override`) now makes every diagram element bound to that series clickable — flowchart nodes and edge labels, sequence actors and message labels — and follows the same link from the series' legend row. Url interpolation (variables, `${__value.numeric}`) and *Open in new tab* are honored; `target=_blank` links get `rel="noopener noreferrer"`. Only `http(s)`/`mailto`/relative urls are linkified.
   - The standard **Data links** field option was previously disabled by the panel, so Grafana stripped data links from the field config before the panel received them and `Overrides -> Data links` silently did nothing. It is enabled again.
+  - A linked label is clickable across its whole box (`pointer-events: bounding-box`), and sequence message lines no longer take the click: a message's value sits below its label, so the arrow line ran through the middle of the link and swallowed it.
+  - Legend links navigate by clicking a real anchor rather than `window.open`, which a popup blocker could swallow when *Open in new tab* was set.
 
 ### Security
 - Node labels are no longer rebuilt through `innerHTML`. The label text (which can come from a remote diagram definition or a dashboard variable) and the formatted value (which comes from the datasource) were re-parsed as markup, so e.g. a value of `<img src=x onerror=...>` executed. Both are now written as text nodes.

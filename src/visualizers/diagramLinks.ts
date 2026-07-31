@@ -50,8 +50,18 @@ export const openLinkModel = (link: LinkModel) => {
   if (!isSafeLinkUrl(link.href)) {
     return;
   }
-  const newTab = link.target === '_blank';
-  window.open(link.href, newTab ? '_blank' : '_self', newTab ? 'noopener,noreferrer' : undefined);
+  // Clicking a real anchor rather than calling window.open: a popup blocker can swallow
+  // window.open('_blank'), which looks exactly like "Open in new tab was ignored".
+  const anchor = document.createElement('a');
+  anchor.href = link.href;
+  if (link.target === '_blank') {
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+  }
+  anchor.style.display = 'none';
+  document.body.appendChild(anchor);
+  anchor.click();
+  document.body.removeChild(anchor);
 };
 
 /**

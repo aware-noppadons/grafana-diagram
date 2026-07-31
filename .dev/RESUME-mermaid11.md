@@ -54,6 +54,19 @@ member) so the host's confirmation and POST-url allowlist still apply — never 
 and trigger from a small separate badge, never the shape itself. The `/d/link-newtab` dashboard on
 :3001 carries a live example: a `Shipping` action override that does nothing.
 
+## TODO / next steps
+
+1. **Version/release** — see below. User's call; explicitly deferred 2026-07-31 ("leave the VERSION
+   untouched for now").
+2. **Keep `.dev/` in sync.** These notes, `scripts/`, `grafana/` and `proof/` exist twice: the live
+   copies at the workspace root (what Docker mounts and Playwright runs) and the vendored snapshot in
+   the plugin repo under `.dev/`. Editing a live copy leaves `.dev/` stale — copy across and commit.
+   The workspace root is deliberately **not** a git repo (a throwaway one was created and removed on
+   2026-07-31 once the vendoring decision was made), so the plugin repo is the only history.
+3. **Optional, deliberately not done:** hide the dead `actions` field option (see below), port the
+   hyperlinks to `fix/sequence-diagram-data-binding` / PR #264, or open the standalone mermaid-11
+   upstream PR. All three need sign-off; none is blocking.
+
 ## Open decision: release/versioning
 
 `package.json` + `VERSION` are still `1.10.4` and the CHANGELOG's entries all sit under
